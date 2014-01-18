@@ -2,6 +2,7 @@
 
 ;Decalaration, Facts, Rules
 (defglobal ?*num* = 1)
+(defglobal ?*counter* = 1)
 (defglobal ?*citilink* = 10)
 (defglobal ?*garuda* = 10)
 (defglobal ?*airasia* = 10)
@@ -30,171 +31,331 @@
 (deftemplate cetak-lion (declare (ordered FALSE)))
 (deftemplate cetak-mandala (declare (ordered FALSE)))
 (deftemplate cetak-sriwijaya (declare (ordered FALSE)))
+;deftem delete
+(deftemplate del-inter(declare(ordered FALSE)))
+(deftemplate del-dom(declare(ordered FALSE)))
+(deftemplate del-int(slot id)(slot total))
+(deftemplate del-do(slot id)(slot total))
+(deftemplate del-int-ticket(slot id)(slot num))
+(deftemplate del-do-ticket(slot id)(slot num))
+(deftemplate cari-garuda (slot num))
+(deftemplate cari-sriwijaya (slot num))
+(deftemplate cari-citilink (slot num))
+(deftemplate cari-airasia (slot num))
+(deftemplate cari-lion (slot num))
+(deftemplate cari-mandala (slot num))
 
 (deffacts citilink
-	(citilink 10    "Economy"       "30-12-2013" "Jakarta"          "Semarang"          515000  20)
-	(citilink 9     "Economy"       "29-12-2013" "Jakarta"          "Pangkal Pinang"    615000  30)
-	(citilink 8     "Economy"       "31-12-2013" "Semarang"         "Pangkal Pinang"    540000  50)
-	(citilink 7     "Economy"       "01-01-2014" "Pangkal Pinang"   "Semarang"          650000  45)
-	(citilink 6     "Economy"       "30-12-2013" "Jakarta"          "Semarang"          475000  25)
-	(citilink 5     "Executive"     "31-12-2013" "Semarang"         "Pangkal Pinang"    840000  10)
-	(citilink 4     "Executive"     "30-12-2013" "Jakarta"          "Semarang"          815000  30)
-	(citilink 3     "Executive"     "31-12-2013" "Semarang"         "Jakarta"           875000  60)
-	(citilink 2     "Executive"     "30-12-2013" "Semarang"         "Pangkal Pinang"    915000  50)
-	(citilink 1     "Executive"     "01-01-2014" "Pangkal Pinang"   "Semarang"          950000  20)
+(citilink 10 "Economy" "30-12-2013" "Jakarta" "Semarang" 515000 20)
+(citilink 9 "Economy" "29-12-2013" "Jakarta" "Pangkal Pinang" 615000 30)
+(citilink 8 "Economy" "31-12-2013" "Semarang" "Pangkal Pinang" 540000 50)
+(citilink 7 "Economy" "01-01-2014" "Pangkal Pinang" "Semarang" 650000 45)
+(citilink 6 "Economy" "30-12-2013" "Jakarta" "Semarang" 475000 25)
+(citilink 5 "Executive" "31-12-2013" "Semarang" "Pangkal Pinang" 840000 10)
+(citilink 4 "Executive" "30-12-2013" "Jakarta" "Semarang" 815000 30)
+(citilink 3 "Executive" "31-12-2013" "Semarang" "Jakarta" 875000 60)
+(citilink 2 "Executive" "30-12-2013" "Semarang" "Pangkal Pinang" 915000 50)
+(citilink 1 "Executive" "01-01-2014" "Pangkal Pinang" "Semarang" 950000 20)
 )
-(deffacts garuda
-	(garuda 10  "Economy"       "29-12-2013" "Jakarta"          "Kuala Lumpur"  2150000     15)
-	(garuda 9   "Economy"       "30-12-2013" "Jakarta"          "Singapore"     1500000     10)
-	(garuda 8   "Economy"       "01-01-2014" "Singapore"        "Jakarta"       1800000     20)
-	(garuda 7   "Economy"       "01-01-2014" "Kuala Lumpur"     "Jakarta"       3400000     30)
-	(garuda 6   "Economy"       "30-12-2013" "Kuala Lumpur"     "Singapore"     2500000     35)
-	(garuda 5   "Executive"     "29-12-2013" "Singapore"        "Kuala Lumpur"  3000000     25)
-	(garuda 4   "Executive"     "01-01-2014" "Kuala Lumpur"     "Jakarta"       4400000     20)
-	(garuda 3   "Executive"     "31-12-2013" "Singapore"        "Jakarta"       2800000     30)
-	(garuda 2   "Executive"     "30-12-2013" "Kuala Lumpur"     "Singapore"     3500000     25)
-	(garuda 1   "Executive"     "01-01-2014" "Jakarta"          "Singapore"     2600000     15)
-)
-(deffacts airasia 
-	(airasia 10     "Economy"       "30-12-2013" "Jakarta"          "Semarang"          650000  15)
-	(airasia 9      "Economy"       "31-12-2013" "Semarang"         "Pangkal Pinang"    750000  10)
-	(airasia 8      "Economy"       "01-01-2014" "Semarang"         "Pangkal Pinang"    515000  20)
-	(airasia 7      "Economy"       "29-12-2013" "Pangkal Pinang"   "Jakarta"           550000  30)
-	(airasia 6      "Economy"       "30-12-2013" "Semarang"         "Jakarta"           655000  35)
-	(airasia 5      "Executive"     "01-01-2014" "Jakarta"          "Pangkal Pinang"    815000  25)
-	(airasia 4      "Executive"     "01-01-2014" "Jakarta"          "Semarang"          950000  20)
-	(airasia 3      "Executive"     "29-12-2013" "Semarang"         "Jakarta"           875000  30)
-	(airasia 2      "Executive"     "31-12-2013" "Semarang"         "Pangkal Pinang"    950000  25)
-	(airasia 1      "Executive"     "30-12-2013" "Jakarta"          "Semarang"          850000  15)
-)
-(deffacts lion 
-	(lion 10    "Economy"       "30-12-2013" "Jakarta"          "Semarang"          565000  50)
-	(lion 9     "Economy"       "30-12-2013" "Semarang"         "Pangkal Pinang"    650000  20)
-	(lion 8     "Economy"       "31-12-2013" "Semarang"         "Pangkal Pinang"    475000  25)
-	(lion 7     "Economy"       "01-01-2014" "Pangkal Pinang"   "Semarang"          575000  40)
-	(lion 6     "Economy"       "30-12-2013" "Semarang"         "Jakarta"           555000  30)
-	(lion 5     "Executive"     "31-12-2013" "Semarang"         "Pangkal Pinang"    850000  60)
-	(lion 4     "Executive"     "29-12-2013" "Jakarta"          "Semarang"          915000  15)
-	(lion 3     "Executive"     "31-12-2013" "Semarang"         "Jakarta"           855000  40)
-	(lion 2     "Executive"     "30-12-2013" "Jakarta"          "Pangkal Pinang"    750000  45)
-	(lion 1     "Executive"     "01-01-2014" "Pangkal Pinang"   "Semarang"          895000  55)
-)
-(deffacts mandala 
-	(mandala 10     "Economy"       "31-12-2013" "Semarang"         "Jakarta"           655000 35)
-	(mandala 9      "Economy"       "01-01-2014" "Jakarta"          "Pangkal Pinang"    575000 20)
-	(mandala 8      "Economy"       "30-12-2013" "Pangkal Pinang"   "Jakarta"           550000 35)
-	(mandala 7      "Economy"       "01-01-2014" "Pangkal Pinang"   "Semarang"          685000 50)
-	(mandala 6      "Economy"       "29-12-2013" "Semarang"         "Pangkal Pinang"    625000 45)
-	(mandala 5      "Executive"     "31-12-2013" "Semarang"         "Pangkal Pinang"    750000 15)
-	(mandala 4      "Executive"     "30-12-2013" "Jakarta"          "Semarang"          850000 20)
-	(mandala 3      "Executive"     "29-12-2013" "Pangkal Pinang"   "Jakarta"           875000 35)
-	(mandala 2      "Executive"     "01-01-2014" "Jakarta"          "Pangkal Pinang"    750000 25)
-	(mandala 1      "Executive"     "01-01-2014" "Pangkal Pinang"   "Semarang"          925000 15)
-)
-(deffacts sriwijaya
-	(sriwijaya 10   "Economy"       "30-12-2013" "Jakarta"          "Kuala Lumpur"  3550000 20)
-	(sriwijaya 9    "Economy"       "31-12-2013" "Singapore"        "Jakarta"       2750000 30)
-	(sriwijaya 8    "Economy"       "01-01-2014" "Kuala Lumpur"     "Jakarta"       3500000 25)
-	(sriwijaya 7    "Economy"       "31-12-2013" "Singapore"        "Jakarta"       1800000 10)
-	(sriwijaya 6    "Economy"       "29-12-2013" "Jakarta"          "Kuala Lumpur"  2500000 25)
-	(sriwijaya 5    "Executive"     "30-12-2013" "Singapore"        "Jakarta"       3750000 20)
-	(sriwijaya 4    "Executive"     "01-01-2014" "Kuala Lumpur"     "Singapore"     4500000 15)
-	(sriwijaya 3    "Executive"     "31-12-2013" "Jakarta"          "Singapore"     3500000 25)
-	(sriwijaya 2    "Executive"     "01-01-2014" "Singapore"        "Jakarta"       4150000 30)
-	(sriwijaya 1    "Executive"     "29-12-2013" "Jakarta"          "Kuala Lumpur"  3850000 10)
-)
-
-; cetak
-
 (defrule cetak-citilink
-	(cetak-citilink)
-	(citilink ?id ?class ?date ?origin ?destination ?price ?seat)
-	=>
-	(format t "|%2d.  |%-15s| %-20s| %-15s| %-15s| Rp. %7d | %2d seat(s) |" ?*num* ?class ?date ?origin ?destination ?price ?seat)
-	(printout t crlf)
-	(++ ?*num*)
+    (cetak-citilink)
+    (citilink ?id ?class ?date ?origin ?destination ?price ?seat)
+    =>
+    (printout t "|"?*num* ".   |"?class "   |"?date "	|"?origin "		|"?destination "	| Rp. "?price "		|"?seat " seat<s>	|"crlf)
+    (++ ?*num*)
+    
 )
 (defrule cetak-akhir-citilink
-	?i <- (cetak-citilink)
-	=>
-	(retract ?i)
-	(printout t "=========================================================================================================="crlf)
-	(readline)
-	(assert(mainmenu))
+	(declare (salience -100))
+    ?i <- (cetak-citilink)
+    =>
+    (retract ?i)
+    (printout t "=================================================================================================================" crlf)
+    (readline)
+    (assert(mainmenu))
+)
+(defrule cetak-akhir-citilink2
+    (declare(salience -10))
+    ?i <- (cetak-citilink)
+    ?j <-(deleting)
+    =>
+    (retract ?i)
+    (retract ?j)
+    (printout t "=================================================================================================================" crlf)
+	(-- ?*num*)	
+    (assert (del-do (id 1)(total ?*num*)))
+)
+(defrule cari-citilink
+    ?i <- (cari-citilink (num ?num))
+    ?j <- (citilink ?id ?class ?date ?origin ?destination ?price ?seat)
+    =>
+   	(if (= ?*counter* ?num) then
+        (retract ?i)
+        (retract ?j)
+        (printout t "Successfully deleted")
+        (readline)
+        (assert (mainmenu))
+    else
+	    (++ ?*counter*)
+    )
+)
+
+(deffacts garuda
+(garuda 10 "Economy" "29-12-2013" "Jakarta" "Kuala Lumpur" 2150000 15)
+(garuda 9 "Economy" "30-12-2013" "Jakarta" "Singapore" 1500000 10)
+(garuda 8 "Economy" "01-01-2014" "Singapore" "Jakarta" 1800000 20)
+(garuda 7 "Economy" "01-01-2014" "Kuala Lumpur" "Jakarta" 3400000 30)
+(garuda 6 "Economy" "30-12-2013" "Kuala Lumpur" "Singapore" 2500000 35)
+(garuda 5 "Executive" "29-12-2013" "Singapore" "Kuala Lumpur" 3000000 25)
+(garuda 4 "Executive" "01-01-2014" "Kuala Lumpur" "Jakarta" 4400000 20)
+(garuda 3 "Executive" "31-12-2013" "Singapore" "Jakarta" 2800000 30)
+(garuda 2 "Executive" "30-12-2013" "Kuala Lumpur" "Singapore" 3500000 25)
+(garuda 1 "Executive" "01-01-2014" "Jakarta" "Singapore" 2600000 15)
 )
 (defrule cetak-garuda
-	(cetak-garuda)
-	(garuda ?id ?class ?date ?origin ?destination ?price ?seat)
-	=>
-	(format t "|%2d.  |%-15s| %-20s| %-15s| %-15s| Rp. %7d | %2d seat(s) |" ?*num* ?class ?date ?origin ?destination ?price ?seat)
-	(printout t crlf)
-	(++ ?*num*)
+    (cetak-garuda)
+    (garuda ?id ?class ?date ?origin ?destination ?price ?seat)
+    =>
+    (printout t "|"?*num* ".   |"?class "   |"?date "	|"?origin "		|"?destination "	| Rp. "?price "		|"?seat " seat<s>	|"crlf)
+    (++ ?*num*)
 )
 (defrule cetak-akhir-garuda
-	?i <- (cetak-garuda)
-	=>
-	(retract ?i)
-	(printout t "=========================================================================================================="crlf)
-	(readline)
-	(assert(mainmenu))
+    (declare (salience -100))
+    ?i <- (cetak-garuda)
+    =>
+    (retract ?i)
+    (printout t "=================================================================================================================" crlf)
+    (readline)
+    (assert(mainmenu))
+)
+(defrule cetak-akhir-garuda2
+    (declare(salience -10))
+    ?i <- (cetak-garuda)
+    ?j <- (deleting)
+    =>
+    (retract ?i)
+    (retract ?j)
+    (printout t "=================================================================================================================" crlf)
+	(-- ?*num*)
+    (assert (del-int (id 1)(total ?*num*)))
+)
+(defrule cari-garuda
+    ?i <- (cari-garuda (num ?num))
+    ?j <- (garuda ?id ?class ?date ?origin ?destination ?price ?seat)
+    =>
+   	(if (= ?*counter* ?num) then
+        (retract ?i)
+        (retract ?j)
+        (printout t "Successfully deleted")
+        (readline)
+        (assert (mainmenu))
+    else
+	    (++ ?*counter*)
+    )
+)
+
+(deffacts airasia 
+(airasia 10 "Economy" "30-12-2013" "Jakarta" "Semarang" 650000 15)
+(airasia 9 "Economy" "31-12-2013" "Semarang" "Pangkal Pinang" 750000 10)
+(airasia 8 "Economy" "01-01-2014" "Semarang" "Pangkal Pinang" 515000 20)
+(airasia 7 "Economy" "29-12-2013" "Pangkal Pinang" "Jakarta" 550000 30)
+(airasia 6 "Economy" "30-12-2013" "Semarang" "Jakarta" 655000 35)
+(airasia 5 "Executive" "01-01-2014" "Jakarta" "Pangkal Pinang" 815000 25)
+(airasia 4 "Executive" "01-01-2014" "Jakarta" "Semarang" 950000 20)
+(airasia 3 "Executive" "29-12-2013" "Semarang" "Jakarta" 875000 30)
+(airasia 2 "Executive" "31-12-2013" "Semarang" "Pangkal Pinang" 950000 25)
+(airasia 1 "Executive" "30-12-2013" "Jakarta" "Semarang" 850000 15)
 )
 (defrule cetak-airasia
-	(cetak-airasia)
-	(airasia ?id ?class ?date ?origin ?destination ?price ?seat)
-	=>
-	(format t "|%2d.  |%-15s| %-20s| %-15s| %-15s| Rp. %7d | %2d seat(s) |" ?*num* ?class ?date ?origin ?destination ?price ?seat)
-	(printout t crlf)
-	(++ ?*num*)
+    (cetak-airasia)
+    (airasia ?id ?class ?date ?origin ?destination ?price ?seat)
+    =>
+    (printout t "|"?*num* ".   |"?class "   |"?date "	|"?origin "		|"?destination "	| Rp. "?price "		|"?seat " seat<s>	|"crlf)
+    (++ ?*num*)
 )
 (defrule cetak-akhir-airasia
-	?i <- (cetak-airasia)
-	=>
-	(retract ?i)
-	(printout t "=========================================================================================================="crlf)
-	(readline)
-	(assert(mainmenu))
+	(declare (salience -100))
+    ?i <- (cetak-airasia)
+    =>
+    (retract ?i)
+    (printout t "=================================================================================================================" crlf)
+    (readline)
+    (assert(mainmenu))
+)
+(defrule cetak-akhir-airasia2
+	(declare (salience -10))
+    ?i <- (cetak-airasia)
+    ?j <- (deleting)
+    =>
+    (retract ?i)
+    (retract ?j)
+    (printout t "=================================================================================================================" crlf)
+	(-- ?*num*)	
+    (assert (del-do (id 2)(total ?*num*)))
+)
+(defrule cari-airasia
+    ?i <- (cari-airasia (num ?num))
+    ?j <- (airasia ?id ?class ?date ?origin ?destination ?price ?seat)
+    =>
+   	(if (= ?*counter* ?num) then
+        (retract ?i)
+        (retract ?j)
+        (printout t "Successfully deleted")
+        (readline)
+        (assert (mainmenu))
+    else
+	    (++ ?*counter*)
+    )
+)
+
+(deffacts lion 
+(lion 10 "Economy" "30-12-2013" "Jakarta" "Semarang" 565000 50)
+(lion 9 "Economy" "30-12-2013" "Semarang" "Pangkal Pinang" 650000 20)
+(lion 8 "Economy" "31-12-2013" "Semarang" "Pangkal Pinang" 475000 25)
+(lion 7 "Economy" "01-01-2014" "Pangkal Pinang" "Semarang" 575000 40)
+(lion 6 "Economy" "30-12-2013" "Semarang" "Jakarta" 555000 30)
+(lion 5 "Executive" "31-12-2013" "Semarang" "Pangkal Pinang" 850000 60)
+(lion 4 "Executive" "29-12-2013" "Jakarta" "Semarang" 915000 15)
+(lion 3 "Executive" "31-12-2013" "Semarang" "Jakarta" 855000 40)
+(lion 2 "Executive" "30-12-2013" "Jakarta" "Pangkal Pinang" 750000 45)
+(lion 1 "Executive" "01-01-2014" "Pangkal Pinang" "Semarang" 895000 55)
 )
 (defrule cetak-lion
-	(cetak-lion)
-	(lion ?id ?class ?date ?origin ?destination ?price ?seat)
-	=>
-	(format t "|%2d.  |%-15s| %-20s| %-15s| %-15s| Rp. %7d | %2d seat(s) |" ?*num* ?class ?date ?origin ?destination ?price ?seat)
-	(printout t crlf)
-	(++ ?*num*)
+    (cetak-lion)
+    (lion ?id ?class ?date ?origin ?destination ?price ?seat)
+    =>
+    (printout t "|"?*num* ".   |"?class "   |"?date "	|"?origin "		|"?destination "	| Rp. "?price "		|"?seat " seat<s>	|"crlf)
+    (++ ?*num*)
 )
 (defrule cetak-akhir-lion
-	?i <- (cetak-lion)
-	=>
-	(retract ?i)
-	(printout t "=========================================================================================================="crlf)
-	(readline)
-	(assert(mainmenu))
+	(declare (salience -100))
+    ?i <- (cetak-lion)
+    =>
+    (retract ?i)
+    (printout t "=================================================================================================================" crlf)
+    (readline)
+    (assert(mainmenu))
+)
+(defrule cetak-akhir-lion2
+	(declare (salience -10))
+    ?i <- (cetak-lion)
+    ?j <- (deleting)
+    =>
+    (retract ?i)
+    (retract ?j)
+    (printout t "=================================================================================================================" crlf)
+	(-- ?*num*)	
+    (assert (del-do (id 3)(total ?*num*)))
+)
+(defrule cari-lion
+    ?i <- (cari-lion (num ?num))
+    ?j <- (lion ?id ?class ?date ?origin ?destination ?price ?seat)
+    =>
+   	(if (= ?*counter* ?num) then
+        (retract ?i)
+        (retract ?j)
+        (printout t "Successfully deleted")
+        (readline)
+        (assert (mainmenu))
+    else
+	    (++ ?*counter*)
+    )
+)
+
+(deffacts mandala 
+(mandala 10 "Economy" "31-12-2013" "Semarang" "Jakarta" 655000 35)
+(mandala 9 "Economy" "01-01-2014" "Jakarta" "Pangkal Pinang" 575000 20)
+(mandala 8 "Economy" "30-12-2013" "Pangkal Pinang" "Jakarta" 550000 35)
+(mandala 7 "Economy" "01-01-2014" "Pangkal Pinang" "Semarang" 685000 50)
+(mandala 6 "Economy" "29-12-2013" "Semarang" "Pangkal Pinang" 625000 45)
+(mandala 5 "Executive" "31-12-2013" "Semarang" "Pangkal Pinang" 750000 15)
+(mandala 4 "Executive" "30-12-2013" "Jakarta" "Semarang" 850000 20)
+(mandala 3 "Executive" "29-12-2013" "Pangkal Pinang" "Jakarta" 875000 35)
+(mandala 2 "Executive" "01-01-2014" "Jakarta" "Pangkal Pinang" 750000 25)
+(mandala 1 "Executive" "01-01-2014" "Pangkal Pinang" "Semarang" 925000 15)
 )
 (defrule cetak-mandala
-	(cetak-mandala)
-	(mandala ?id ?class ?date ?origin ?destination ?price ?seat)
-	=>
-	(format t "|%2d.  |%-15s| %-20s| %-15s| %-15s| Rp. %7d | %2d seat(s) |" ?*num* ?class ?date ?origin ?destination ?price ?seat)
-	(printout t crlf)
-	(++ ?*num*)
+    (cetak-mandala)
+    (mandala ?id ?class ?date ?origin ?destination ?price ?seat)
+    =>
+    (printout t "|"?*num* ".   |"?class "   |"?date "	|"?origin "		|"?destination "	| Rp. "?price "		|"?seat " seat<s>	|"crlf)
+    (++ ?*num*)
 )
 (defrule cetak-akhir-mandala
-	?i <- (cetak-mandala)
-	=>
-	(retract ?i)
-	(printout t "=========================================================================================================="crlf)
-	(readline)
-	(assert(mainmenu))
+	(declare (salience -100))
+    ?i <- (cetak-mandala)
+    =>
+    (retract ?i)
+    (printout t "=================================================================================================================" crlf)
+    (readline)
+    (assert(mainmenu))
+)
+(defrule cetak-akhir-mandala2
+	(declare (salience -10))
+    ?i <- (cetak-mandala)
+    ?j <- (deleting)
+    =>
+    (retract ?i)
+    (retract ?j)
+    (printout t "=================================================================================================================" crlf)
+	(-- ?*num*)	
+    (assert (del-do (id 4)(total ?*num*)))
+)
+(defrule cari-mandala
+    ?i <- (cari-mandala (num ?num))
+    ?j <- (mandala ?id ?class ?date ?origin ?destination ?price ?seat)
+    =>
+   	(if (= ?*counter* ?num) then
+        (retract ?i)
+        (retract ?j)
+        (printout t "Successfully deleted")
+        (readline)
+        (assert (mainmenu))
+    else
+	    (++ ?*counter*)
+    )
+)
+
+(deffacts sriwijaya
+(sriwijaya 10 "Economy" "30-12-2013" "Jakarta" "Kuala Lumpur" 3550000 20)
+(sriwijaya 9 "Economy" "31-12-2013" "Singapore" "Jakarta" 2750000 30)
+(sriwijaya 8 "Economy" "01-01-2014" "Kuala Lumpur" "Jakarta" 3500000 25)
+(sriwijaya 7 "Economy" "31-12-2013" "Singapore" "Jakarta" 1800000 10)
+(sriwijaya 6 "Economy" "29-12-2013" "Jakarta" "Kuala Lumpur" 2500000 25)
+(sriwijaya 5 "Executive" "30-12-2013" "Singapore" "Jakarta" 3750000 20)
+(sriwijaya 4 "Executive" "01-01-2014" "Kuala Lumpur" "Singapore" 4500000 15)
+(sriwijaya 3 "Executive" "31-12-2013" "Jakarta" "Singapore" 3500000 25)
+(sriwijaya 2 "Executive" "01-01-2014" "Singapore" "Jakarta" 4150000 30)
+(sriwijaya 1 "Executive" "29-12-2013" "Jakarta" "Kuala Lumpur" 3850000 10)
 )
 (defrule cetak-sriwijaya
-	(cetak-sriwijaya)
-	(sriwijaya ?id ?class ?date ?origin ?destination ?price ?seat)
-	=>
-	(format t "|%2d.  |%-15s| %-20s| %-15s| %-15s| Rp. %7d | %2d seat(s) |" ?*num* ?class ?date ?origin ?destination ?price ?seat)
-	(printout t crlf)
-	(++ ?*num*)
+    (cetak-sriwijaya)
+    (sriwijaya ?id ?class ?date ?origin ?destination ?price ?seat)
+    =>
+    (printout t "|"?*num* ".   |"?class "   |"?date "	|"?origin "		|"?destination "	| Rp. "?price "		|"?seat " seat<s>	|"crlf)
+    (++ ?*num*)
 )
 (defrule cetak-akhir-sriwijaya
+	(declare (salience -100))
+    ?i <- (cetak-sriwijaya)
+    =>
+    (retract ?i)
+    (printout t "=================================================================================================================" crlf)
+    (readline)
+    (assert(mainmenu))
+)
+(defrule cetak-akhir-sriwijaya2
+	(declare (salience -10))
+    ?i <- (cetak-sriwijaya)
+    ?j <- (deleting)
+    =>
+    (retract ?i)
+    (retract ?j)
+    (printout t "=================================================================================================================" crlf)
+	(-- ?*num*)
+    (assert (del-int (id 2)(total ?*num*)))
+)
+(defrule cari-sriwijaya
 	?i <- (cetak-sriwijaya)
 	=>
 	(retract ?i)
@@ -1030,6 +1191,197 @@
 
 
 ;===========================================================================================================================
+;4. delete ticket
+
+(defrule delete-ticket
+    ?i <- (deltix)  
+    =>
+
+    (printout t "List of Flight"crlf)
+    (printout t "=============="crlf)
+    (printout t "1. Domestic Flight"crlf)
+    (printout t "2. International Flight"crlf crlf)
+    (printout t "Choose[1..2|0 -> previous menu]: ")
+    (bind ?pil (read))
+    
+    (retract ?i)
+    (if(numberp ?pil) then
+    	(if(= ?pil 0) then (assert (mainmenu))
+        elif(= ?pil 1) then 
+            (assert (del-dom))
+        elif(= ?pil 2) then 
+            (assert (del-inter))
+        else 
+            (assert (deltix))   
+        )
+    else (assert (deltix))    
+    )
+)
+
+(deffunction del-international (?inter)
+    (assert (deleting))
+    (if(= ?inter 1) then
+    	(printout t "Garuda Indonesia" crlf)
+        (printout t "================================================================================================================="crlf)
+		(printout t "|No.  |Type of Class |Date of Departure |Origin		|Destination 	|Price			|Available 	|"crlf)
+		(printout t "================================================================================================================="crlf)
+        (assert(cetak-garuda))
+        
+    else
+        (printout t "Sriwijaya Air" crlf)
+        (printout t "================================================================================================================="crlf)
+		(printout t "|No.  |Type of Class |Date of Departure |Origin		|Destination 	|Price			|Available 	|"crlf)
+		(printout t "================================================================================================================="crlf)
+        (assert(cetak-sriwijaya))
+    )
+)
+
+(deffunction del-domestic (?dom)
+    (assert (deleting))
+    (if(= ?dom 1) then
+    	(printout t "Citilink" crlf)
+        (printout t "================================================================================================================="crlf)
+		(printout t "|No.  |Type of Class |Date of Departure |Origin		|Destination 	|Price			|Available 	|"crlf)
+		(printout t "================================================================================================================="crlf)
+        (assert(cetak-citilink))
+    elif(= ?dom 2) then
+        (printout t "Indonesia Air Asia" crlf)
+        (printout t "================================================================================================================="crlf)
+		(printout t "|No.  |Type of Class |Date of Departure |Origin		|Destination 	|Price			|Available 	|"crlf)
+		(printout t "================================================================================================================="crlf)
+        (assert(cetak-airasia))
+    elif(= ?dom 3) then
+        (printout t "Lion Air" crlf)
+        (printout t "================================================================================================================="crlf)
+		(printout t "|No.  |Type of Class |Date of Departure |Origin		|Destination 	|Price			|Available 	|"crlf)
+		(printout t "================================================================================================================="crlf)
+        (assert(cetak-lion))
+    else
+        (printout t "Mandala Airlines" crlf)
+        (printout t "================================================================================================================="crlf)
+		(printout t "|No.  |Type of Class |Date of Departure |Origin		|Destination 	|Price			|Available 	|"crlf)
+		(printout t "================================================================================================================="crlf)
+        (assert(cetak-mandala))
+    )
+)
+
+(defrule delete-international-flight
+	?i <- (del-inter)
+    =>
+    (retract ?i)
+    
+    (printout t "Update International Flight Ticket" crlf)
+    (printout t "==================================" crlf)
+    (printout t "1. Garuda Indonesia"crlf)
+    (printout t "2. Sriwijaya Air"crlf crlf)
+    (printout t "Choose[1..2|0 -> previous menu]: ")
+    (bind ?pil (read))
+    
+    (if(numberp ?pil) then
+        (if(= ?pil 0) then (assert(deltix))
+        elif(or(= ?pil 1)(= ?pil 2)) then
+            (bind ?*num* 1)
+            (del-international ?pil)
+        else (assert(del-inter))
+        )
+    else (assert(del-inter))    
+    )
+)
+
+(defrule delete-domestic-flight
+    ?i <- (del-dom)
+    =>
+    (retract ?i)
+    
+    (printout t "View Domestic Flight" crlf)
+    (printout t "====================" crlf)
+    (printout t "1. Citilink"crlf)
+    (printout t "2. Indonesia Air Asia"crlf)
+    (printout t "3. Lion Air"crlf)
+    (printout t "4. Mandala Airlines"crlf crlf)
+    (printout t "Choose[1..4|0 -> previous menu]: ")
+    (bind ?pil (read))
+    
+    (if(numberp ?pil) then
+        (if(= ?pil 0) then (assert(deltix))
+        elif(or(= ?pil 1)(= ?pil 2)(= ?pil 3)(= ?pil 4)) then
+            (bind ?*num* 1)
+            (del-domestic ?pil)
+        else (assert(del-dom))
+        )
+    else (assert(del-dom))    
+    )
+)
+
+(defrule del-int-ticket
+	?i <- (del-int-ticket(id ?id)(num ?num))
+    =>
+    (if (= ?id 1) then
+    	(assert (cari-garuda(num ?num)))
+    else
+        (assert (cari-sriwijaya(num ?num)))
+    )
+    (retract ?i)
+)
+
+(defrule del-do-ticket
+	?i <- (del-do-ticket(id ?id)(num ?num))
+    =>
+    (if (= ?id 1) then
+    	(assert (cari-citilink(num ?num)))
+    elif(= ?id 2) then
+        (assert (cari-airasia(num ?num)))
+    elif(= ?id 3) then
+        (assert (cari-lion(num ?num)))
+    else
+        (assert (cari-mandala(num ?num)))
+    )
+    (retract ?i)
+)
+
+(defrule delete-international
+    (declare (salience -20))
+	?i <- (del-int (id ?id)(total ?tot))
+    =>
+    (retract ?i)
+    
+    (printout t "Item number to be deleted [1.." ?tot " | 0 to back to previous menu] : ")
+    (bind ?pilih(read))
+    
+    (if (numberp ?pilih) then
+        (if (= ?pilih 0) then
+        	(assert (del-inter))
+        elif(or(< ?pilih 0) (> ?pilih ?tot)) then
+            (assert (del-int(id ?id)(total ?tot)))
+        else 
+            (bind ?*counter* 1)
+            (assert (del-int-ticket(id ?id)(num ?pilih)))
+        )
+    else (assert(del-int(id ?id)(total ?tot)))
+   	)
+)
+
+(defrule delete-domestic
+    (declare (salience -20))
+	?i <- (del-do (id ?id)(total ?tot))
+    =>
+    (retract ?i)
+    
+    (printout t "Item number to be deleted [1.." ?tot " | 0 to back to previous menu] : ")
+    (bind ?pilih(read))
+    
+    (if (numberp ?pilih) then
+        (if (= ?pilih 0) then
+        	(assert (del-dom))
+        elif(or(< ?pilih 0) (> ?pilih ?tot)) then
+            (assert (del-do(id ?id)(total ?tot)))
+        else 
+            (bind ?*counter* 1)
+            (assert (del-do-ticket(id ?id)(num ?pilih)))
+        )
+    else (assert(del-do(id ?id)(total ?tot)))
+   	)
+)
 
 (reset)
 (run)
