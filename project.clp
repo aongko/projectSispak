@@ -550,12 +550,81 @@
 (deftemplate update-dom (declare(ordered FALSE)))
 (deftemplate update-inter (declare(ordered FALSE)))
 
+(deftemplate cetak-update-citilink (declare(ordered FALSE)))
+(deftemplate cetak-update-airasia (declare(ordered FALSE)))
+(deftemplate cetak-update-lion (declare(ordered FALSE)))
+(deftemplate cetak-update-mandala (declare(ordered FALSE)))
 (deftemplate cetak-update-garuda (declare(ordered FALSE)))
 (deftemplate cetak-update-sriwijaya (declare(ordered FALSE)))
 
+(deftemplate cetak-update-citilink-akhir (declare(ordered FALSE)))
+(deftemplate cetak-update-airasia-akhir (declare(ordered FALSE)))
+(deftemplate cetak-update-lion-akhir (declare(ordered FALSE)))
+(deftemplate cetak-update-mandala-akhir (declare(ordered FALSE)))
 (deftemplate cetak-update-garuda-akhir (declare(ordered FALSE)))
 (deftemplate cetak-update-sriwijaya-akhir (declare(ordered FALSE)))
 
+; funcion for update data =========================================
+(deffunction update-domestic-flight-data-rule (?dom ?id)
+	(bind ?class "")
+	(while (and (neq ?class "Economy") (neq ?class "Executive")) 
+		(printout t "Input the type of class [Economy|Executive] : ")
+		(bind ?class (readline))
+	)
+	(bind ?date "")
+	(while (and (neq ?date "29-12-2013") (neq ?date "30-12-2013") (neq ?date "31-12-2013") (neq ?date "01-01-2014")) 
+		(printout t "Input the date of departure ['29-12-2013'..'01-01-2014'] : ") 
+		(bind ?date (readline))
+	)
+	(bind ?origin "")
+	(while (and (neq ?origin "Jakarta") (neq ?origin "Semarang") (neq ?origin "Pangkal Pinang")) 
+		(printout t "Input the origin of the flight [Jakarta|Semarang|Pangkal Pinang]: ") 
+		(bind ?origin (readline))
+	)
+	(bind ?destination "")
+	(if (eq ?origin "Jakarta") then 
+		(while (and (neq ?destination "Semarang") (neq ?destination "Pangkal Pinang")) 
+			(printout t "Input the destination of the flight [Semarang|Pangkal Pinang]: ") 
+			(bind ?destination (readline))
+		) 
+	elif (eq ?origin "Semarang") then  
+		(while (and (neq ?destination "Jakarta") (neq ?destination "Pangkal Pinang")) 
+			(printout t "Input the destination of the flight [Jakarta|Pangkal Pinang]: ") 
+			(bind ?destination (readline))
+		) 
+	elif (eq ?origin "Pangkal Pinang") then 
+		(while (and (neq ?destination "Jakarta") (neq ?destination "Semarang")) 
+			(printout t "Input the destination of the flight [Jakarta|Semarang]: ") 
+			(bind ?destination (readline))
+		)
+	)
+	(bind ?price 0)
+	(while (or (not (numberp ?price)) (< ?price 500000) (> ?price 1000000) (neq (mod ?price 5000) 0))
+		(printout t "Input the price [Rp. 500000..Rp. 1000000 and multiple of Rp. 5000]: ")
+		(bind ?price (read))
+	)
+	(bind ?seat 0)
+	(while (or (not (numberp ?seat)) (< ?seat 10) (> ?seat 60))
+		(printout t "Input the available seat<s> [10..60]: ") 
+		(bind ?seat (read))
+	)
+    
+    (retract ?id)
+	(if (eq ?dom 1) then
+		(assert (citilink ?*selected-index* ?class ?date ?origin ?destination ?price ?seat))    
+	 elif (eq ?dom 2) then
+		(assert (airasia ?*selected-index* ?class ?date ?origin ?destination ?price ?seat))
+	 elif (eq ?dom 3) then
+		(assert (lion ?*selected-index* ?class ?date ?origin ?destination ?price ?seat))
+	 elif (eq ?dom 4) then
+		(assert (mandala ?*selected-index* ?class ?date ?origin ?destination ?price ?seat))
+	)
+
+	(printout t crlf)
+	(printout t "Successfully updated")
+	(readline)
+	(assert(mainmenu))
+)
 (deffunction update-international-flight-data-rule (?inter ?id)
 	(bind ?class "")
 	(while (and (neq ?class "Economy") (neq ?class "Executive")) 
@@ -616,7 +685,165 @@
 	(readline)
 	(assert(mainmenu))
 )
+;==================================================================
 
+
+
+; rule for domestic flight ====================
+(defrule cetak-update-citilink-rule
+	(cetak-update-citilink)
+	(citilink ?id ?class ?date ?origin ?destination ?price ?seat)
+	=>
+    (format t "|%2d.  |%-15s| %-20s| %-15s| %-15s| Rp. %7d | %2d seat(s) |" ?*num* ?class ?date ?origin ?destination ?price ?seat)
+	(printout t crlf)
+	(++ ?*num*)
+)
+(defrule cetak-update-citilink2-rule
+    ?i <- (cetak-update-citilink)
+	=>
+    (retract ?i)
+    (printout t "=========================================================================================================="crlf)
+	
+    (bind ?updateid "")
+	(while (and (neq ?updateid 0) (or (not (numberp ?updateid)) (< ?updateid 1) (> ?updateid ?*num*)))
+        (printout t "Item number to be updated [1.." (- ?*num* 1) " | 0 to back to previous menu]: ")
+		(bind ?updateid (read))
+	)
+
+    (if (eq ?updateid 0) then
+        (assert (update-dom))
+    else
+        (bind ?*selected-index* ?updateid)
+	    (bind ?*num* 1)
+	    (assert (cetak-update-citilink-akhir))
+	)
+)
+(defrule cetak-update-citilink-akhir-rule
+	(cetak-update-citilink-akhir)
+    ?i <- (citilink ?id ?class ?date ?origin ?destination ?price ?seat)
+	=>
+    (if(eq ?*num* ?*selected-index*) then
+        (update-domestic-flight-data-rule 1 ?i)
+    )
+    (++ ?*num*)
+)
+
+(defrule cetak-update-airasia-rule
+	(cetak-update-airasia)
+	(airasia ?id ?class ?date ?origin ?destination ?price ?seat)
+	=>
+    (format t "|%2d.  |%-15s| %-20s| %-15s| %-15s| Rp. %7d | %2d seat(s) |" ?*num* ?class ?date ?origin ?destination ?price ?seat)
+	(printout t crlf)
+	(++ ?*num*)
+)
+(defrule cetak-update-airasia2-rule
+    ?i <- (cetak-update-airasia)
+	=>
+    (retract ?i)
+    (printout t "=========================================================================================================="crlf)
+	
+    (bind ?updateid "")
+	(while (and (neq ?updateid 0) (or (not (numberp ?updateid)) (< ?updateid 1) (> ?updateid ?*num*)))
+        (printout t "Item number to be updated [1.." (- ?*num* 1) " | 0 to back to previous menu]: ")
+		(bind ?updateid (read))
+	)
+
+    (if (eq ?updateid 0) then
+        (assert (update-dom))
+    else
+        (bind ?*selected-index* ?updateid)
+	    (bind ?*num* 1)
+	    (assert (cetak-update-airasia-akhir))
+	)
+)
+(defrule cetak-update-airasia-akhir-rule
+	(cetak-update-airasia-akhir)
+    ?i <- (airasia ?id ?class ?date ?origin ?destination ?price ?seat)
+	=>
+    (if(eq ?*num* ?*selected-index*) then
+        (update-domestic-flight-data-rule 2 ?i)
+    )
+    (++ ?*num*)
+)
+
+(defrule cetak-update-lion-rule
+	(cetak-update-lion)
+	(lion ?id ?class ?date ?origin ?destination ?price ?seat)
+	=>
+    (format t "|%2d.  |%-15s| %-20s| %-15s| %-15s| Rp. %7d | %2d seat(s) |" ?*num* ?class ?date ?origin ?destination ?price ?seat)
+	(printout t crlf)
+	(++ ?*num*)
+)
+(defrule cetak-update-lion2-rule
+    ?i <- (cetak-update-lion)
+	=>
+    (retract ?i)
+    (printout t "=========================================================================================================="crlf)
+	
+    (bind ?updateid "")
+	(while (and (neq ?updateid 0) (or (not (numberp ?updateid)) (< ?updateid 1) (> ?updateid ?*num*)))
+        (printout t "Item number to be updated [1.." (- ?*num* 1) " | 0 to back to previous menu]: ")
+		(bind ?updateid (read))
+	)
+
+    (if (eq ?updateid 0) then
+        (assert (update-dom))
+    else
+        (bind ?*selected-index* ?updateid)
+	    (bind ?*num* 1)
+	    (assert (cetak-update-lion-akhir))
+	)
+)
+(defrule cetak-update-lion-akhir-rule
+	(cetak-update-lion-akhir)
+    ?i <- (lion ?id ?class ?date ?origin ?destination ?price ?seat)
+	=>
+    (if(eq ?*num* ?*selected-index*) then
+        (update-domestic-flight-data-rule 3 ?i)
+    )
+    (++ ?*num*)
+)
+
+(defrule cetak-update-mandala-rule
+	(cetak-update-mandala)
+	(mandala ?id ?class ?date ?origin ?destination ?price ?seat)
+	=>
+    (format t "|%2d.  |%-15s| %-20s| %-15s| %-15s| Rp. %7d | %2d seat(s) |" ?*num* ?class ?date ?origin ?destination ?price ?seat)
+	(printout t crlf)
+	(++ ?*num*)
+)
+(defrule cetak-update-mandala2-rule
+    ?i <- (cetak-update-mandala)
+	=>
+    (retract ?i)
+    (printout t "=========================================================================================================="crlf)
+	
+    (bind ?updateid "")
+	(while (and (neq ?updateid 0) (or (not (numberp ?updateid)) (< ?updateid 1) (> ?updateid ?*num*)))
+        (printout t "Item number to be updated [1.." (- ?*num* 1) " | 0 to back to previous menu]: ")
+		(bind ?updateid (read))
+	)
+
+    (if (eq ?updateid 0) then
+        (assert (update-dom))
+    else
+        (bind ?*selected-index* ?updateid)
+	    (bind ?*num* 1)
+	    (assert (cetak-update-mandala-akhir))
+	)
+)
+(defrule cetak-update-mandala-akhir-rule
+	(cetak-update-mandala-akhir)
+    ?i <- (mandala ?id ?class ?date ?origin ?destination ?price ?seat)
+	=>
+    (if(eq ?*num* ?*selected-index*) then
+        (update-domestic-flight-data-rule 4 ?i)
+    )
+    (++ ?*num*)
+)
+;==============================================
+
+; rule for international flight ===============
 (defrule cetak-update-garuda-rule
 	(cetak-update-garuda)
     ;?i <- (garuda ?id ?class ?date ?origin ?destination ?price ?seat)
@@ -698,6 +925,7 @@
     )
     (++ ?*num*)
 )
+;==============================================
 
 (defrule update-ticket
     ?i <- (updatetix)
@@ -750,6 +978,53 @@
 		else (assert(update-inter))
 		)
 	else (assert(update-inter))    
+	)
+)
+
+(defrule update-domestic-flight
+    ?i <- (update-dom)
+    =>
+    (retract ?i)
+    (bind ?*num* 1)
+    
+    (printout t "LIST OF ITEM(S) TO BE UPDATED" crlf)
+	(printout t "===========================" crlf)
+	(printout t "1. Citilink"crlf)
+	(printout t "2. Indonesia Air Asia"crlf)
+	(printout t "3. Lion Air"crlf)
+	(printout t "4. Mandala Airlines"crlf crlf)
+	(printout t "Choose[1..4| 0 to back to previous menu]: ")
+	(bind ?pil (read))
+	
+	(if(numberp ?pil) then
+		(if(= ?pil 1) then
+			(printout t "CITILINK" crlf)
+			(printout t "=========================================================================================================="crlf)
+			(printout t "|No.  |Type of Class  | Date of Departure   | Origin         | Destination    | Price       | Available  |"crlf)
+			(printout t "=========================================================================================================="crlf)
+			(assert(cetak-update-citilink))
+		elif(= ?pil 2) then
+			(printout t "INDONESIA AIR ASIA" crlf)
+			(printout t "=========================================================================================================="crlf)
+			(printout t "|No.  |Type of Class  | Date of Departure   | Origin         | Destination    | Price       | Available  |"crlf)
+			(printout t "=========================================================================================================="crlf)
+			(assert(cetak-update-airasia))
+		elif(= ?pil 3) then
+			(printout t "LION AIR" crlf)
+			(printout t "=========================================================================================================="crlf)
+			(printout t "|No.  |Type of Class  | Date of Departure   | Origin         | Destination    | Price       | Available  |"crlf)
+			(printout t "=========================================================================================================="crlf)
+			(assert(cetak-update-lion))
+		elif(= ?pil 4) then
+			(printout t "MANDALA AIR" crlf)
+			(printout t "=========================================================================================================="crlf)
+			(printout t "|No.  |Type of Class  | Date of Departure   | Origin         | Destination    | Price       | Available  |"crlf)
+			(printout t "=========================================================================================================="crlf)
+			(assert(cetak-update-mandala))
+		elif(= ?pil 0) then (assert(updatetix))
+		else (assert(update-dom))
+		)
+	else (assert(update-dom))
 	)
 )
 
