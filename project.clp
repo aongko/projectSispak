@@ -546,5 +546,215 @@
 
 ;===========================================================================================================================
 
+;3. Update Ticket
+(deftemplate update-dom (declare(ordered FALSE)))
+(deftemplate update-inter (declare(ordered FALSE)))
+
+(deftemplate cetak-update-garuda (declare(ordered FALSE)))
+(deftemplate cetak-update-sriwijaya (declare(ordered FALSE)))
+
+(deftemplate cetak-update-garuda-akhir (declare(ordered FALSE)))
+(deftemplate cetak-update-sriwijaya-akhir (declare(ordered FALSE)))
+
+(deffunction update-international-flight-data-rule (?inter ?id)
+	(bind ?class "")
+	(while (and (neq ?class "Economy") (neq ?class "Executive")) 
+		(printout t "Input the type of class [Economy|Executive] : ")
+		(bind ?class (readline))
+	)
+	(bind ?date "")
+	(while (and (neq ?date "29-12-2013") (neq ?date "30-12-2013") (neq ?date "31-12-2013") (neq ?date "01-01-2014")) 
+		(printout t "Input the date of departure ['29-12-2013'..'01-01-2014'] : ") 
+		(bind ?date (readline))
+	)
+	(bind ?origin "")
+	(while (and (neq ?origin "Jakarta") (neq ?origin "Singapore") (neq ?origin "Kuala Lumpur"))
+		(printout t "Input the origin of the flight [Jakarta|Singapore|Kuala Lumpur]: ")
+		(bind ?origin (readline))    
+	)
+	(bind ?destination "")
+	(if (eq ?origin "Jakarta") then
+		(bind ?destination "")
+		(while (and (neq ?destination "Singapore") (neq ?destination "Kuala Lumpur"))
+			(printout t "Input the destination of the flight [Singapore|Kuala Lumpur]: ")
+			(bind ?destination (readline))    
+		)
+	elif(eq ?origin "Singapore") then
+		(bind ?destination "")
+		(while (and (neq ?destination "Jakarta") (neq ?destination "Kuala Lumpur"))
+			(printout t "Input the destination of the flight [Jakarta|Kuala Lumpur]: ")
+			(bind ?destination (readline))    
+		)
+	else
+		(bind ?destination "")
+		(while (and (neq ?destination "Jakarta") (neq ?destination "Singapore"))
+			(printout t "Input the destination of the flight [Jakarta|Singapore]: ")
+			(bind ?destination (readline))    
+		)
+	)
+	(bind ?price 0)
+	(while (or (not (numberp ?price)) (< ?price 1000000) (> ?price 4000000) (neq (mod ?price 50000) 0))
+		(printout t "Input the price [Rp. 1000000..Rp. 4000000 and multiple of Rp. 50000]: ")
+		(bind ?price (read))
+	)
+	(bind ?seat 0)
+	(while (or (not (numberp ?seat)) (< ?seat 10) (> ?seat 30))
+		(printout t "Input the available seat<s> [10..30]: ") 
+		(bind ?seat (read))
+	)
+    
+    (retract ?id)
+	(if (eq ?inter 1) then
+		;(++ ?*garuda*)
+		(assert (garuda ?*selected-index* ?class ?date ?origin ?destination ?price ?seat))    
+	 elif (eq ?inter 2) then
+		;(++ ?*sriwijaya*)
+		(assert (sriwijaya ?*selected-index* ?class ?date ?origin ?destination ?price ?seat))
+	)
+	(printout t crlf)
+	(printout t "Successfully updated")
+	(readline)
+	(assert(mainmenu))
+)
+
+(defrule cetak-update-garuda-rule
+	(cetak-update-garuda)
+    ;?i <- (garuda ?id ?class ?date ?origin ?destination ?price ?seat)
+	(garuda ?id ?class ?date ?origin ?destination ?price ?seat)
+	=>
+    ;(retract ?i)
+    ;(assert (garuda ?*num* ?class ?date ?origin ?destination ?price ?seat))
+    ;(bind ?*garuda* ?*num*)
+    (format t "|%2d.  |%-15s| %-20s| %-15s| %-15s| Rp. %7d | %2d seat(s) |" ?*num* ?class ?date ?origin ?destination ?price ?seat)
+	(printout t crlf)
+	(++ ?*num*)
+)
+(defrule cetak-update-garuda2-rule
+    ?i <- (cetak-update-garuda)
+	=>
+    (retract ?i)
+    (printout t "=========================================================================================================="crlf)
+	
+    (bind ?updateid "")
+	(while (and (neq ?updateid 0) (or (not (numberp ?updateid)) (< ?updateid 1) (> ?updateid ?*num*)))
+        ;(printout t "updateid: " (not (numberp ?updateid)) crlf)
+		(printout t "Item number to be updated [1.." (- ?*num* 1) " | 0 to back to previous menu]: ")
+		(bind ?updateid (read))
+	)
+
+    (if (eq ?updateid 0) then
+        (assert (update-inter))
+    else
+        (bind ?*selected-index* ?updateid)
+	    (bind ?*num* 1)
+	    (assert (cetak-update-garuda-akhir))
+	)
+)
+(defrule cetak-update-garuda-akhir-rule
+	(cetak-update-garuda-akhir)
+    ?i <- (garuda ?id ?class ?date ?origin ?destination ?price ?seat)
+	=>
+    (if(eq ?*num* ?*selected-index*) then
+        (update-international-flight-data-rule 1 ?i)
+    )
+    (++ ?*num*)
+    
+)
+
+(defrule cetak-update-sriwijaya-rule
+	(cetak-update-sriwijaya)
+    (sriwijaya ?id ?class ?date ?origin ?destination ?price ?seat)
+	=>
+    (format t "|%2d.  |%-15s| %-20s| %-15s| %-15s| Rp. %7d | %2d seat(s) |" ?*num* ?class ?date ?origin ?destination ?price ?seat)
+	(printout t crlf)
+	(++ ?*num*)
+)
+(defrule cetak-update-sriwijaya2-rule
+    ?i <- (cetak-update-sriwijaya)
+	=>
+    (retract ?i)
+    (printout t "=========================================================================================================="crlf)
+	
+    (bind ?updateid "")
+	(while (and (neq ?updateid 0) (or (not (numberp ?updateid)) (< ?updateid 1) (> ?updateid ?*num*)))
+        (printout t "Item number to be updated [1.." (- ?*num* 1) " | 0 to back to previous menu]: ")
+		(bind ?updateid (read))
+	)
+
+    (if (eq ?updateid 0) then
+        (assert (update-inter))
+    else
+        (bind ?*selected-index* ?updateid)
+	    (bind ?*num* 1)
+	    (assert (cetak-update-sriwijaya-akhir))
+	)
+)
+(defrule cetak-update-sriwijaya-akhir-rule
+	(cetak-update-sriwijaya-akhir)
+    ?i <- (sriwijaya ?id ?class ?date ?origin ?destination ?price ?seat)
+	=>
+    (if(eq ?*num* ?*selected-index*) then
+        (update-international-flight-data-rule 2 ?i)
+    )
+    (++ ?*num*)
+)
+
+(defrule update-ticket
+    ?i <- (updatetix)
+    =>
+    (retract ?i)
+    
+    (printout t "List of Flight"crlf)
+	(printout t "=============="crlf)
+	(printout t "1. Domestic Flight"crlf)
+	(printout t "2. International Flight"crlf crlf)
+	(printout t "Choose[1..2|0 to back to previous menu]: ")
+	(bind ?pil (read))
+	
+	(if(numberp ?pil) then
+		(if(= ?pil 0) then (assert (mainmenu))
+		elif(= ?pil 1) then (assert (update-dom))
+		elif(= ?pil 2) then (assert (update-inter))
+		else (assert (updatetix))
+		)
+	else (assert (updatetix))
+	)
+)
+(defrule update-international-flight
+    ?i <- (update-inter)
+    =>
+    (retract ?i)
+    (bind ?*num* 1)
+    
+    (printout t "LIST OF ITEM(S) TO BE UPDATED" crlf)
+	(printout t "=============================" crlf)
+	(printout t "1. Garuda Indonesia"crlf)
+	(printout t "2. Sriwijaya Air"crlf crlf)
+	(printout t "Choose[1..2| 0 to back to previous menu]: ")
+	(bind ?pil (read))
+	
+	(if(numberp ?pil) then
+		(if(= ?pil 1) then
+			(printout t "GARUDA INDONESIA" crlf)
+			(printout t "=========================================================================================================="crlf)
+			(printout t "|No.  |Type of Class  | Date of Departure   | Origin         | Destination    | Price       | Available  |"crlf)
+			(printout t "=========================================================================================================="crlf)
+			(assert(cetak-update-garuda))
+		elif(= ?pil 2) then
+			(printout t "SRIWIJAYA AIR" crlf)
+			(printout t "=========================================================================================================="crlf)
+			(printout t "|No.  |Type of Class  | Date of Departure   | Origin         | Destination    | Price       | Available  |"crlf)
+			(printout t "=========================================================================================================="crlf)
+			(assert(cetak-update-sriwijaya))
+		elif(= ?pil 0) then (assert(updatetix))
+		else (assert(update-inter))
+		)
+	else (assert(update-inter))    
+	)
+)
+
+
+;===========================================================================================================================
+
 (reset)
 (run)
