@@ -24,6 +24,7 @@
 (deftemplate addtix (declare (ordered FALSE)))
 (deftemplate updatetix (declare (ordered FALSE)))
 (deftemplate deltix (declare (ordered FALSE)))
+(deftemplate tix-simulation (declare (ordered FALSE)))
 
 (deftemplate cetak-citilink (declare (ordered FALSE)))
 (deftemplate cetak-garuda (declare (ordered FALSE)))
@@ -259,7 +260,7 @@
 	(retract ?i)
 	(retract ?j)
 	(printout t "=========================================================================================================="crlf)
-	(-- ?*num*)	
+	(-- ?*num*)
 	(assert (del-do (id 2)(total ?*num*)))
 )
 
@@ -271,7 +272,7 @@
 	(retract ?i)
 	(retract ?j)
 	(printout t "=========================================================================================================="crlf)
-	(-- ?*num*)	
+	(-- ?*num*)
 	(assert (del-do (id 3)(total ?*num*)))
 )
 
@@ -283,7 +284,7 @@
 	(retract ?i)
 	(retract ?j)
 	(printout t "=========================================================================================================="crlf)
-	(-- ?*num*)	
+	(-- ?*num*)
 	(assert (del-do (id 4)(total ?*num*)))
 )
 
@@ -424,12 +425,12 @@
 		;4. Delete Ticket
 		elif(= ?pil 4) then (assert (deltix))
 		;5. Ticket Simulating
-		elif(= ?pil 5) then (printout t "Simulasi belum selesai" crlf)(readline)
+		elif(= ?pil 5) then (assert (tix-simulation))
 		;6. Exit
 		elif(= ?pil 6) then (printout t "Thank you!" crlf)
 		else (assert (mainmenu))
-		)  
-	else (assert (mainmenu))  
+		)
+	else (assert (mainmenu))
 	)
 )
 
@@ -439,7 +440,7 @@
 (deftemplate inter(declare(ordered FALSE)))
 (deftemplate dom(declare(ordered FALSE)))
 (defrule view-ticket
-	?i <- (viewtix)  
+	?i <- (viewtix)
 	=>
 	(retract ?i)
 	
@@ -454,9 +455,9 @@
 		(if(= ?pil 0) then (assert (mainmenu))
 		elif(= ?pil 1) then (assert (dom))
 		elif(= ?pil 2) then (assert (inter))
-		else (assert (viewtix))   
+		else (assert (viewtix)) 
 		)
-	else (assert (viewtix))    
+	else (assert (viewtix))
 	)
 )
 ;1a. International Flight
@@ -488,12 +489,12 @@
 		elif(= ?pil 0) then (assert(viewtix))
 		else (assert(inter))
 		)
-	else (assert(inter))    
+	else (assert(inter))
 	)
 )
 ;1b. Domestic Flight
 (defrule domestic-flight
-	?i <- (dom)    
+	?i <- (dom)
 	=>
 	(retract ?i)
 	
@@ -534,7 +535,7 @@
 		elif(= ?pil 0) then (assert(viewtix))
 		else(assert (dom))
 		)
-	else (assert(dom))    
+	else (assert(dom))
 	)
 )
 
@@ -565,7 +566,7 @@
 			(printout t "Input the destination of the flight [Semarang|Pangkal Pinang]: ") 
 			(bind ?destination (readline))
 		) 
-	elif (eq ?origin "Semarang") then  
+	elif (eq ?origin "Semarang") then
 		(while (and (neq ?destination "Jakarta") (neq ?destination "Pangkal Pinang")) 
 			(printout t "Input the destination of the flight [Jakarta|Pangkal Pinang]: ") 
 			(bind ?destination (readline))
@@ -588,7 +589,7 @@
 	)
 	(if (eq ?dom 1) then
 		(++ ?*citilink*)
-		(assert (citilink ?*citilink* ?class ?date ?origin ?destination ?price ?seat))    
+		(assert (citilink ?*citilink* ?class ?date ?origin ?destination ?price ?seat))
 	 elif (eq ?dom 2) then
 		(++ ?*airasia*)
 		(assert (airasia ?*airasia* ?class ?date ?origin ?destination ?price ?seat))
@@ -618,26 +619,26 @@
 	(bind ?origin "")
 	(while (and (neq ?origin "Jakarta") (neq ?origin "Singapore") (neq ?origin "Kuala Lumpur"))
 		(printout t "Input the origin of the flight [Jakarta|Singapore|Kuala Lumpur]: ")
-		(bind ?origin (readline))    
+		(bind ?origin (readline))
 	)
 	(bind ?destination "")
 	(if (eq ?origin "Jakarta") then
 		(bind ?destination "")
 		(while (and (neq ?destination "Singapore") (neq ?destination "Kuala Lumpur"))
 			(printout t "Input the destination of the flight [Singapore|Kuala Lumpur]: ")
-			(bind ?destination (readline))    
+			(bind ?destination (readline))
 		)
 	elif(eq ?origin "Singapore") then
 		(bind ?destination "")
 		(while (and (neq ?destination "Jakarta") (neq ?destination "Kuala Lumpur"))
 			(printout t "Input the destination of the flight [Jakarta|Kuala Lumpur]: ")
-			(bind ?destination (readline))    
+			(bind ?destination (readline))
 		)
 	else
 		(bind ?destination "")
 		(while (and (neq ?destination "Jakarta") (neq ?destination "Singapore"))
 			(printout t "Input the destination of the flight [Jakarta|Singapore]: ")
-			(bind ?destination (readline))    
+			(bind ?destination (readline))
 		)
 	)
 	(bind ?price 0)
@@ -652,7 +653,7 @@
 	)
 	(if (eq ?inter 1) then
 		(++ ?*garuda*)
-		(assert (garuda ?*garuda* ?class ?date ?origin ?destination ?price ?seat))    
+		(assert (garuda ?*garuda* ?class ?date ?origin ?destination ?price ?seat))
 	 elif (eq ?inter 2) then
 		(++ ?*sriwijaya*)
 		(assert (sriwijaya ?*sriwijaya* ?class ?date ?origin ?destination ?price ?seat))
@@ -664,7 +665,7 @@
 )
 
 (defrule add-ticket
-	?i <- (addtix)  
+	?i <- (addtix)
 	=>
 	(retract ?i)
 	
@@ -702,7 +703,7 @@
 		elif(or(= ?pil 1)(= ?pil 2)) then (add-international ?pil)
 		else (assert(add-inter))
 		)
-	else (assert(add-inter))    
+	else (assert(add-inter))
 	)
 )
 ;2b. Domestic Flight
@@ -725,7 +726,7 @@
 		elif(or(= ?pil 1)(= ?pil 2)(= ?pil 3)(= ?pil 4)) then (add-domestic ?pil)
 		else (assert(add-dom))
 		)
-	else (assert(add-dom))    
+	else (assert(add-dom))
 	)
 )
 
@@ -772,7 +773,7 @@
 			(printout t "Input the destination of the flight [Semarang|Pangkal Pinang]: ") 
 			(bind ?destination (readline))
 		) 
-	elif (eq ?origin "Semarang") then  
+	elif (eq ?origin "Semarang") then
 		(while (and (neq ?destination "Jakarta") (neq ?destination "Pangkal Pinang")) 
 			(printout t "Input the destination of the flight [Jakarta|Pangkal Pinang]: ") 
 			(bind ?destination (readline))
@@ -796,7 +797,7 @@
 	
 	(retract ?id)
 	(if (eq ?dom 1) then
-		(assert (citilink ?*selected-index* ?class ?date ?origin ?destination ?price ?seat))    
+		(assert (citilink ?*selected-index* ?class ?date ?origin ?destination ?price ?seat))
 	 elif (eq ?dom 2) then
 		(assert (airasia ?*selected-index* ?class ?date ?origin ?destination ?price ?seat))
 	 elif (eq ?dom 3) then
@@ -824,26 +825,26 @@
 	(bind ?origin "")
 	(while (and (neq ?origin "Jakarta") (neq ?origin "Singapore") (neq ?origin "Kuala Lumpur"))
 		(printout t "Input the origin of the flight [Jakarta|Singapore|Kuala Lumpur]: ")
-		(bind ?origin (readline))    
+		(bind ?origin (readline))
 	)
 	(bind ?destination "")
 	(if (eq ?origin "Jakarta") then
 		(bind ?destination "")
 		(while (and (neq ?destination "Singapore") (neq ?destination "Kuala Lumpur"))
 			(printout t "Input the destination of the flight [Singapore|Kuala Lumpur]: ")
-			(bind ?destination (readline))    
+			(bind ?destination (readline))
 		)
 	elif(eq ?origin "Singapore") then
 		(bind ?destination "")
 		(while (and (neq ?destination "Jakarta") (neq ?destination "Kuala Lumpur"))
 			(printout t "Input the destination of the flight [Jakarta|Kuala Lumpur]: ")
-			(bind ?destination (readline))    
+			(bind ?destination (readline))
 		)
 	else
 		(bind ?destination "")
 		(while (and (neq ?destination "Jakarta") (neq ?destination "Singapore"))
 			(printout t "Input the destination of the flight [Jakarta|Singapore]: ")
-			(bind ?destination (readline))    
+			(bind ?destination (readline))
 		)
 	)
 	(bind ?price 0)
@@ -860,7 +861,7 @@
 	(retract ?id)
 	(if (eq ?inter 1) then
 		;(++ ?*garuda*)
-		(assert (garuda ?*selected-index* ?class ?date ?origin ?destination ?price ?seat))    
+		(assert (garuda ?*selected-index* ?class ?date ?origin ?destination ?price ?seat))
 	 elif (eq ?inter 2) then
 		;(++ ?*sriwijaya*)
 		(assert (sriwijaya ?*selected-index* ?class ?date ?origin ?destination ?price ?seat))
@@ -1162,7 +1163,7 @@
 		elif(= ?pil 0) then (assert(updatetix))
 		else (assert(update-inter))
 		)
-	else (assert(update-inter))    
+	else (assert(update-inter))
 	)
 )
 
@@ -1218,7 +1219,7 @@
 ;4. delete ticket
 
 (defrule delete-ticket
-	?i <- (deltix)  
+	?i <- (deltix)
 	=>
 
 	(printout t "List of Flight"crlf)
@@ -1236,9 +1237,9 @@
 		elif(= ?pil 2) then 
 			(assert (del-inter))
 		else 
-			(assert (deltix))   
+			(assert (deltix)) 
 		)
-	else (assert (deltix))    
+	else (assert (deltix))
 	)
 )
 
@@ -1246,16 +1247,16 @@
 	(assert (deleting))
 	(if(= ?inter 1) then
 		(printout t "Garuda Indonesia" crlf)
-		(printout t "================================================================================================================="crlf)
-		(printout t "|No.  |Type of Class |Date of Departure |Origin		|Destination 	|Price			|Available 	|"crlf)
-		(printout t "================================================================================================================="crlf)
+		(printout t "=========================================================================================================="crlf)
+		(printout t "|No.  |Type of Class  | Date of Departure   | Origin         | Destination    | Price       | Available  |"crlf)
+		(printout t "=========================================================================================================="crlf)
 		(assert(cetak-garuda))
 		
 	else
 		(printout t "Sriwijaya Air" crlf)
-		(printout t "================================================================================================================="crlf)
-		(printout t "|No.  |Type of Class |Date of Departure |Origin		|Destination 	|Price			|Available 	|"crlf)
-		(printout t "================================================================================================================="crlf)
+		(printout t "=========================================================================================================="crlf)
+		(printout t "|No.  |Type of Class  | Date of Departure   | Origin         | Destination    | Price       | Available  |"crlf)
+		(printout t "=========================================================================================================="crlf)
 		(assert(cetak-sriwijaya))
 	)
 )
@@ -1264,27 +1265,27 @@
 	(assert (deleting))
 	(if(= ?dom 1) then
 		(printout t "Citilink" crlf)
-		(printout t "================================================================================================================="crlf)
-		(printout t "|No.  |Type of Class |Date of Departure |Origin		|Destination 	|Price			|Available 	|"crlf)
-		(printout t "================================================================================================================="crlf)
+		(printout t "=========================================================================================================="crlf)
+		(printout t "|No.  |Type of Class  | Date of Departure   | Origin         | Destination    | Price       | Available  |"crlf)
+		(printout t "=========================================================================================================="crlf)
 		(assert(cetak-citilink))
 	elif(= ?dom 2) then
 		(printout t "Indonesia Air Asia" crlf)
-		(printout t "================================================================================================================="crlf)
-		(printout t "|No.  |Type of Class |Date of Departure |Origin		|Destination 	|Price			|Available 	|"crlf)
-		(printout t "================================================================================================================="crlf)
+		(printout t "=========================================================================================================="crlf)
+		(printout t "|No.  |Type of Class  | Date of Departure   | Origin         | Destination    | Price       | Available  |"crlf)
+		(printout t "=========================================================================================================="crlf)
 		(assert(cetak-airasia))
 	elif(= ?dom 3) then
 		(printout t "Lion Air" crlf)
-		(printout t "================================================================================================================="crlf)
-		(printout t "|No.  |Type of Class |Date of Departure |Origin		|Destination 	|Price			|Available 	|"crlf)
-		(printout t "================================================================================================================="crlf)
+		(printout t "=========================================================================================================="crlf)
+		(printout t "|No.  |Type of Class  | Date of Departure   | Origin         | Destination    | Price       | Available  |"crlf)
+		(printout t "=========================================================================================================="crlf)
 		(assert(cetak-lion))
 	else
 		(printout t "Mandala Airlines" crlf)
-		(printout t "================================================================================================================="crlf)
-		(printout t "|No.  |Type of Class |Date of Departure |Origin		|Destination 	|Price			|Available 	|"crlf)
-		(printout t "================================================================================================================="crlf)
+		(printout t "=========================================================================================================="crlf)
+		(printout t "|No.  |Type of Class  | Date of Departure   | Origin         | Destination    | Price       | Available  |"crlf)
+		(printout t "=========================================================================================================="crlf)
 		(assert(cetak-mandala))
 	)
 )
@@ -1405,6 +1406,121 @@
 		)
 	else (assert(del-do(id ?id)(total ?tot)))
 	)
+)
+
+;===========================================================================================================================
+;5. Ticket simulation
+
+(defrule ticket-simulation
+	?i <- (tix-simulation)
+	=>
+	(retract ?i)
+	
+	(printout t "TICKETING SIMULATION" crlf)
+	(printout t "====================" crlf)
+	
+	(bind ?typeOfFlight "")
+	(while (and
+		(neq (str-compare ?typeOfFlight "Domestic") 0)
+		(neq (str-compare ?typeOfFlight "International") 0)
+		)
+	(printout t "Input the type of flight [Domestic|International] : ")
+	(bind ?typeOfFlight (readline))
+	)
+	
+	(bind ?budgetMin 0)
+	(bind ?budgetMax 0)
+	
+	(bind ?origin1 "")
+	(bind ?origin2 "")
+	(bind ?origin3 "")
+	(if (eq (str-compare ?typeOfFlight "Domestic") 0) then
+	(bind ?budgetMin 600000)
+	(bind ?budgetMax 1000000)
+	
+	(bind ?origin1 "Jakarta")
+	(bind ?origin2 "Semarang")
+	(bind ?origin3 "Pangkal Pinang")
+	 else
+	(bind ?budgetMin 2000000)
+	(bind ?budgetMax 5000000)
+	
+	(bind ?origin1 "Jakarta")
+	(bind ?origin2 "Singapore")
+	(bind ?origin3 "Kuala Lumpur")
+	)
+	
+	(bind ?budget 0)
+	(while (or
+		(not (numberp ?budget))
+		(or
+			(< ?budget ?budgetMin)
+			(> ?budget ?budgetMax)
+		)
+		)
+	(printout t "Input the budget [Rp. " ?budgetMin "..Rp. " ?budgetMax "] : Rp.")
+	(bind ?budget (read))
+	)
+	
+	(bind ?origin "")
+	(while (and
+		(neq (str-compare ?origin ?origin1) 0)
+		(and
+			(neq (str-compare ?origin ?origin2) 0)
+			(neq (str-compare ?origin ?origin3) 0)
+		)
+		)
+	(printout t "Input the origin of the flight [" ?origin1 "|" ?origin2"|" ?origin3"] :")
+	(bind ?origin (readline))
+	)
+	
+	(bind ?destination1 "")
+	(bind ?destination2 "")
+	
+	(if (eq (str-compare ?origin ?origin1) 0) then
+	(bind ?destination1 ?origin2)
+	(bind ?destination2 ?origin3)
+	 elif (eq (str-compare ?origin ?origin2) 0) then
+	(bind ?destination1 ?origin1)
+	(bind ?destination2 ?origin3)
+	 elif (eq (str-compare ?origin ?origin3) 0) then
+	(bind ?destination1 ?origin1)
+	(bind ?destination2 ?origin2)
+	)
+	
+	(bind ?destination "")
+	(while (and
+		(neq (str-compare ?destination ?destination1) 0)
+		(neq (str-compare ?destination ?destination2) 0)
+		)
+	(printout t "Input the destination of the flight [" ?destination1 "|" ?destination2 "] : ")
+	(bind ?destination (readline))
+	)
+	
+	(bind ?dateOfDeparture "")
+	(while (and
+		(neq (str-compare ?dateOfDeparture "29-12-2013") 0)
+		(neq (str-compare ?dateOfDeparture "30-12-2013") 0)
+		(neq (str-compare ?dateOfDeparture "31-12-2013") 0)
+		(neq (str-compare ?dateOfDeparture "01-01-2014") 0)
+		)
+	(printout t "Input the date of departure ['29-12-2013'..'01-01-2014'] : ")
+	(bind ?dateOfDeparture (readline))
+	)
+	
+	(bind ?numberOfTickets 0)
+	(while (or
+		(not (numberp ?numberOfTickets))
+		(<= ?numberOfTickets 0)
+		)
+	(printout t "Input the number of ticket(s) [must be numeric and more than 0] : ")
+	(bind ?numberOfTickets (read))
+	)
+	
+	(printout t crlf crlf)
+	(printout t ?typeOfFlight " " ?budget " " ?origin " " ?destination " " ?dateOfDeparture " " ?numberOfTickets)
+	(printout t "Press ENTER to see the result...")
+	(readline)
 )
 
 (reset)
